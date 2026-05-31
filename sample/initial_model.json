@@ -1,0 +1,34 @@
+[{
+    "propertya": "a",
+    "propertyb": 1,
+    "propertyc": ["hola", "mundo"],
+    "propertyd": {
+        "propertyd1": "camilo",
+        "propertyd2": 20,
+        "propertyd3": [
+            "san","lorenzo","boedo","argentina"]
+    }
+},
+{
+    "propertya": "b",
+    "propertyb": 2,
+    "propertyc": ["adios", "mundo"],
+    "propertyd": {
+        "propertyd1": "coco",
+        "propertyd2": 3,
+        "propertyd3": [
+            "san","lorenzo","campeon","2014"]
+    }
+},
+{
+    "propertya": "c",
+    "propertyb": 3,
+    "propertyc": ["argentina", "ciclon"],
+    "propertyd": {
+        "propertyd1": "camilo",
+        "propertyd2": 20,
+        "propertyd3": [
+            "matadores","1908","casla","boedo"]
+    }
+}
+]

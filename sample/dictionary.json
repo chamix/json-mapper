@@ -1,0 +1,12 @@
+{
+    "propiedad1": "propertya",
+    "proiedad2": "propertyb",
+    "propiedad3": {
+        "propiedad3_1":"propertyc[1]",
+        "propiedad3_2":"propertyc[0]"
+    },
+    "propiedad4": [
+    "propertyd.propertyd1","propertyd.propertyd2","propertyd.propertyd3[0]",
+    "propertyd.propertyd3[1]","propertyd.propertyd3[2]","propertyd.propertyd3[3]"
+    ]
+}

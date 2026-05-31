@@ -1,0 +1,50 @@
+[
+  {
+    "propiedad1": "a",
+    "proiedad2": 1,
+    "propiedad3": {
+      "propiedad3_1": "mundo",
+      "propiedad3_2": "hola"
+    },
+    "propiedad4": [
+      "camilo",
+      20,
+      "san",
+      "lorenzo",
+      "boedo",
+      "argentina"
+    ]
+  },
+  {
+    "propiedad1": "b",
+    "proiedad2": 2,
+    "propiedad3": {
+      "propiedad3_1": "mundo",
+      "propiedad3_2": "adios"
+    },
+    "propiedad4": [
+      "coco",
+      3,
+      "san",
+      "lorenzo",
+      "campeon",
+      "2014"
+    ]
+  },
+  {
+    "propiedad1": "c",
+    "proiedad2": 3,
+    "propiedad3": {
+      "propiedad3_1": "ciclon",
+      "propiedad3_2": "argentina"
+    },
+    "propiedad4": [
+      "camilo",
+      20,
+      "matadores",
+      "1908",
+      "casla",
+      "boedo"
+    ]
+  }
+]

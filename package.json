@@ -1,0 +1,21 @@
+{
+  "name": "json-mapper",
+  "version": "1.0.0",
+  "description": "A high-performance, patterns-driven structural JSON transformer CLI module.",
+  "type": "module",
+  "main": "src/infrastructure/cli/bin.js",
+  "bin": {
+    "json-mapper": "./src/infrastructure/cli/bin.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "json",
+    "mapper",
+    "transform",
+    "cli"
+  ],
+  "author": "chamix2",
+  "license": "ISC"
+}
