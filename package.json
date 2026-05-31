@@ -17,5 +17,9 @@
     "cli"
   ],
   "author": "chamix2",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^15.0.0",
+    "pino": "^10.3.1"
+  }
 }

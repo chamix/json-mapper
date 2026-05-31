@@ -188,3 +188,9 @@ We decoupling core application logic from the Node.js `fs` module using an adapt
 - Execute command-line tool with sample files:
   `node src/infrastructure/cli/bin.js -i ./sample/initial_model.json -d ./sample/dictionary.json -o ./sample/output.json`
 - Compare the created output against expected dictionary structures.
+
+---
+
+## 7. Architectural Evolution (Version 2)
+
+For Version 2 specifications regarding the integration of external npm packages (`commander` and `pino`) without compromising our clean domain boundaries, refer to the [V2 Integration Specification](file:///c:/Source/json-mapper/.agents/specs/v2_npm_integration.md).
