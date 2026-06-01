@@ -1,0 +1,24 @@
+{
+    "transaction_details": {
+        "id": "TXN-2026-88910",
+        "financials": {
+            "baseAmount": 1450.50,
+            "tax_percentage": 0.15,
+            "currencyCode": "EUR"
+        }
+    },
+    "customerProfile": {
+        "PersonalData": {
+            "FirstName": "Gideon",
+            "LastName": "Thorne",
+            "demographics": {
+                "age": 34,
+                "country_of_origin": "CA"
+            }
+        },
+        "security_flags": {
+            "is_verified": false,
+            "mfa_status": "ENABLED"
+        }
+    }
+}

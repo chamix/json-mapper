@@ -1,0 +1,12 @@
+{
+  "id": "traceId",
+  "status": "account_active",
+  "score": "systemScore",
+  "profile": {
+    "fullName": "client_name"
+  },
+  "meta": {
+    "timestamp": "signup_timestamp",
+    "legacyCode": "legacy_id_string"
+  }
+}

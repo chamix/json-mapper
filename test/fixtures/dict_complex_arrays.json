@@ -1,0 +1,6 @@
+{
+  "batchId": "batchIdentifier",
+  "totalRecords": "records_count",
+  "environment": "execution_environment",
+  "items": "payloadData"
+}

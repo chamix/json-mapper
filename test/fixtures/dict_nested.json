@@ -1,0 +1,12 @@
+{
+  "transactionId": "transaction_details.id",
+  "amount": "transaction_details.financials.baseAmount",
+  "taxRate": "transaction_details.financials.tax_percentage",
+  "currency": "transaction_details.financials.currencyCode",
+  "customer": {
+    "name": "customerProfile.PersonalData.FirstName",
+    "surname": "customerProfile.PersonalData.LastName",
+    "age": "customerProfile.PersonalData.demographics.age"
+  },
+  "isVerified": "customerProfile.security_flags.is_verified"
+}
