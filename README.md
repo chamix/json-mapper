@@ -33,16 +33,53 @@ cat sample/output.json
 
 ---
 
+## Multi-File & Directory Processing Guide
+
+This section explains how to run transformations across multiple files or directories using the two topological mapping modes.
+
+### 1-to-1 Mapping (Directory to Directory)
+
+In `1:1` mode, each source file maps to an individual converted output file inside a target directory.
+
+```bash
+# Create directory containing source JSON arrays
+mkdir -p data/inputs
+echo '[{"id": 1, "name": "Alice"}]' > data/inputs/users_us.json
+echo '[{"id": 2, "name": "Bob"}]' > data/inputs/users_eu.json
+
+# Execute the mapping. The output directory is automatically generated
+node src/infrastructure/cli/bin.js -i data/inputs -d sample/dictionary.json -o data/outputs -m 1:1
+
+# Verify output files have been generated with matching names
+cat data/outputs/users_us.json
+cat data/outputs/users_eu.json
+```
+
+### Many-to-1 Mapping (Wildcard Glob to Unified File)
+
+In `many:1` mode, the mapper reads files matching a wildcard pattern, runs the transformation, and concatenates all records into a single destination JSON array.
+
+```bash
+# Execute mapping using wildcard glob pattern
+node src/infrastructure/cli/bin.js -i "data/inputs/*.json" -d sample/dictionary.json -o data/merged.json -m many:1
+
+# Verify the unified output file contains records from all matched inputs
+cat data/merged.json
+```
+
+---
+
 ## Command Line Interface (CLI) Reference
 
 The command-line interface uses `commander` to parse options and enforce constraints.
 
 ### Available Options
 
-All parameter options are required for the mapping execution:
-- `-i, --input <file>` - Specifies the path to the source JSON dataset file (array format).
+All parameter options are required for the mapping execution (except `--mode` which defaults to `1:1`):
+- `-i, --input <path>` - Specifies the path to the source JSON file, directory path, or wildcard glob pattern.
 - `-d, --dict <file>` - Specifies the path to the mapping schema dictionary JSON file.
-- `-o, --output <file>` - Specifies the path to write the transformed JSON output file.
+- `-o, --output <path>` - Specifies the output file path or directory path.
+- `-m, --mode <mode>` - Specifies the mapping topology mode: `1:1` (default) or `many:1`.
 - `-V, --version` - Outputs the version number of the tool.
 - `-h, --help` - Renders the CLI usage instructions and options overview.
 
@@ -67,15 +104,19 @@ When a transformation executes successfully, the system logs a structured teleme
 ```json
 {
   "level": 30,
-  "time": "2026-05-31T22:58:49.825Z",
+  "time": "2026-06-20T17:37:36.123Z",
   "pid": 8692,
   "hostname": "Notebook-Camilo-1",
   "telemetry": true,
   "metric": "mapping_execution_telemetry",
+  "durationUs": 4260,
+  "processedFileCount": 2,
+  "aggregateObjectCount": 3,
+  "mode": "1:1",
   "durationMs": 4.26,
   "recordCount": 3,
-  "inputFile": "./sample/initial_model.json",
-  "outputFile": "./sample/output.json",
+  "inputFile": "/absolute/path/to/inputs/file1.json",
+  "outputFile": "/absolute/path/to/outputs/file1.json",
   "msg": "Telemetry Metric: mapping_execution_telemetry"
 }
 ```
@@ -83,10 +124,14 @@ When a transformation executes successfully, the system logs a structured teleme
 #### Metrics Properties
 - `metric` - Identifies the telemetry event type (`mapping_execution_telemetry`).
 - `telemetry` - Flags (`true`) that this log records operational performance metrics.
-- `durationMs` - Records the high-precision execution timing calculated in milliseconds via Node.js native `performance.now()`.
-- `recordCount` - Tracks the total count of source JSON objects mapped.
-- `inputFile` - Specifies the path string to the input JSON file.
-- `outputFile` - Specifies the path string to the written output JSON file.
+- `durationUs` - Records the total execution duration in microseconds.
+- `processedFileCount` - Tracks the count of resolved input files processed in the transaction.
+- `aggregateObjectCount` - Tracks the total number of source objects mapped across all files.
+- `mode` - Denotes the mapping mode: `1:1` or `many:1`.
+- `durationMs` - Records the high-precision execution timing calculated in milliseconds (retained for backward compatibility).
+- `recordCount` - Tracks the total count of source JSON objects mapped (retained for backward compatibility).
+- `inputFile` - Specifies the path to the first input JSON file processed (retained for backward compatibility).
+- `outputFile` - Specifies the path to the written output JSON file (retained for backward compatibility).
 
 ---
 
@@ -131,10 +176,14 @@ Execute only the E2E verification test suite:
 node --test test/e2e/
 ```
 
+### Running Unit Test Suite
+
 Execute only the unit testing suite:
 ```bash
 node --test test/unit/
 ```
+
+### Running Target Test File
 
 Execute a single target test file directly:
 ```bash

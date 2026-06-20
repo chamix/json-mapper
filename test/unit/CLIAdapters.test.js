@@ -30,9 +30,9 @@ class MockMapJsonUseCase {
     return {
       recordCount: 5,
       durationMs: 15.6,
-      inputFile: params.inputFile,
+      inputFile: params.files?.[0]?.input || params.inputFile,
       dictionaryFile: params.dictionaryFile,
-      outputFile: params.outputFile
+      outputFile: params.files?.[0]?.output || params.outputFile
     };
   }
 }
@@ -63,9 +63,9 @@ test('CLIController - maps parameters correctly and handles success', async () =
   assert.strictEqual(exitCode, 0);
 
   assert.deepEqual(useCaseMock.calledWith, {
-    inputFile: 'input_src.json',
+    mode: '1:1',
     dictionaryFile: 'dict_src.json',
-    outputFile: 'output_src.json'
+    files: [{ input: 'input_src.json', output: 'output_src.json' }]
   });
 
   assert.ok(consoleMock.logs[0].includes('✔ Mapping Process Completed Successfully!'));

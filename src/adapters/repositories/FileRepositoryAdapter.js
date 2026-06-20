@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import { IFileRepository } from '../../usecases/ports/IFileRepository.js';
 
 export class FileRepositoryAdapter extends IFileRepository {
@@ -19,6 +20,8 @@ export class FileRepositoryAdapter extends IFileRepository {
 
   async writeJson(filePath, data) {
     try {
+      const dir = path.dirname(filePath);
+      await fs.mkdir(dir, { recursive: true });
       const content = JSON.stringify(data, null, 2);
       await fs.writeFile(filePath, content, 'utf-8');
     } catch (error) {

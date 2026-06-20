@@ -5,13 +5,27 @@ export class CLIController {
     this.logger = logger;
   }
 
-  async handle({ inputFile, dictionaryFile, outputFile }) {
+  async handle(requestDto) {
     try {
-      const resultMetrics = await this.mapJsonUseCase.execute({
-        inputFile,
-        dictionaryFile,
-        outputFile
-      });
+      if (!requestDto) {
+        throw new Error('RequestDTO is required');
+      }
+
+      // Convert old parameter format to RequestDTO format for backward compatibility
+      let executionDto = requestDto;
+      if (requestDto.inputFile && requestDto.outputFile) {
+        executionDto = {
+          mode: '1:1',
+          dictionaryFile: requestDto.dictionaryFile,
+          files: [{ input: requestDto.inputFile, output: requestDto.outputFile }]
+        };
+      }
+
+      if (!executionDto.dictionaryFile || !executionDto.files || executionDto.files.length === 0) {
+        throw new Error('All parameters (inputFile, dictionaryFile, outputFile) are required');
+      }
+
+      const resultMetrics = await this.mapJsonUseCase.execute(executionDto);
 
       this.cliPresenter.presentSuccess(resultMetrics);
       return 0;
