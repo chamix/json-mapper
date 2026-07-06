@@ -21,7 +21,12 @@ export class CLIController {
         };
       }
 
-      if (!executionDto.dictionaryFile || !executionDto.files || executionDto.files.length === 0) {
+      const isStream = !!executionDto.inputStream;
+      if (isStream) {
+        if (!executionDto.dictionaryFile || !executionDto.outputFile) {
+          throw new Error('All parameters (dictionaryFile, outputFile) are required for stream mapping');
+        }
+      } else if (!executionDto.dictionaryFile || !executionDto.files || executionDto.files.length === 0) {
         throw new Error('All parameters (inputFile, dictionaryFile, outputFile) are required');
       }
 

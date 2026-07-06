@@ -31,7 +31,22 @@ Once the functional domain is established, map those pure rules to an optimized 
 *   **Pattern Application:** Explicitly select and document appropriate GoF patterns to manage your components (e.g., *Strategy* for switching translation engines, *Facade* or *Adapter* for isolating external libraries).
 *   **Output:** Append this plan to `.agents/specs/initial_scaffold.md` and present the complete blueprint to the user for explicit approval.
 
-### Step 2: Implementation Delegation & Code Review
+### Step 2: Implementation Delegation
 1.  Upon user validation and approval, delegate execution tasks directly to your specialized Subagents (such as the `full-stack-engineer`).
-2.  Instruct subagents to strictly implement the design utilizing automated, isolated test-driven pipelines (TDD).
-3.  **The Quality Gate:** Review all code modifications and terminal diagnostics outputted by subagents inside the sandbox. Ensure no code leaks outer dependencies into your inner domain layers before delivering the final response.
+2.  Every delegation must declare: in-scope file paths, expected output format (full rewrite vs. diff), and which spec section the task closes. See the Task Boundary Contract in each subagent's SKILL.md.
+3.  Instruct subagents to strictly implement the design utilizing automated, isolated test-driven pipelines (TDD), respecting their own stopping conditions (e.g. max Red-Green-Refactor cycles before escalating back to you).
+
+### Step 2.5: Independent Review (Blocking Gate)
+You do **not** review your own subagents' code. That is a conflict of interest — you wrote the spec, and grading your own plan invites confirmation bias.
+1.  Delegate review to the `code-reviewer` persona, which has no authorship stake in either the spec or the code.
+2.  Do not proceed to delivery while `.agents/specs/review_report.md` contains any **Blocking** item. Route blocking items back to `full-stack-engineer` as a new, narrowly-scoped task and repeat this step.
+3.  You may disagree with the reviewer's verdict, but any override must be stated explicitly to the user with your reasoning — never silently overruled.
+
+### Step 3: Log & Deliver
+1.  Run the `/log-run` workflow to append this task to `.agents/metrics/RUN_LOG.md` before closing out.
+2.  Present the final result to the user along with the reviewer's verdict summary.
+
+## Repository-Local Artifact Storage Rule
+To maintain git-tracking and repository self-containment:
+1. All planning, task lists, specifications, review reports, and walkthrough summaries (including `implementation_plan.md`, `task.md`, and `walkthrough.md`) must be saved under the repository-local `.agents/` directory (e.g., `.agents/specs/` or `.agents/`).
+2. Do **not** save these documents in the IDE-local scratch/brain folders (such as `<appDataDir>\brain\...`). The IDE-local folders are reserved strictly for execution metadata or runtime system artifacts, not repository-governing files.

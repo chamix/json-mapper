@@ -1,11 +1,13 @@
 ---
 name: /audit-design
-description: Audits the active directory against Clean Architecture rules, SOLID principles, and GoF design patterns.
+description: Audits the active directory against Clean Architecture rules, SOLID principles, and GoF design patterns. Run by the independent code-reviewer, not the Lead Architect, to avoid grading your own homework.
 ---
 
 # Workflow: Architectural Compliance Audit
 
-When this command is triggered, execute the following steps inside your sandbox:
+/mention @Code Reviewer
+
+When this command is triggered, the `code-reviewer` persona executes the following steps inside the sandbox — not the Lead Architect, since the Lead Architect authored the rules being checked against:
 
 1.  **Codebase Scan:** Analyze all recently modified source files or files currently sitting in the git staging area.
 2.  **Bibliographic Assessment:** Cross-reference the discovered file structures, class declarations, and architectural boundaries against the guidelines established in `AGENTS.md`:

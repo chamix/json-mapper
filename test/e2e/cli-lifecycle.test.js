@@ -11,7 +11,7 @@ const outputDir = path.resolve(__dirname, '../output');
 const fixturesDir = path.resolve(__dirname, '../fixtures');
 
 // Helper to execute child process safely with stream intercepts
-function runCLI(args) {
+function runCLI(args, stdinData) {
   return new Promise((resolve, reject) => {
     const child = fork(cliPath, args, { silent: true });
     let stdout = '';
@@ -32,6 +32,11 @@ function runCLI(args) {
     child.on('error', (err) => {
       reject(err);
     });
+
+    if (stdinData !== undefined) {
+      child.stdin.write(stdinData);
+      child.stdin.end();
+    }
   });
 }
 
@@ -197,3 +202,45 @@ test('E2E CLI - Complex array collections lifecycle transformation success', asy
   assert.match(stdout, /"telemetry":true/, 'Stdout logs must contain telemetry marker');
   assert.match(stdout, /"metric":"mapping_execution_telemetry"/, 'Stdout logs must contain telemetry performance metric');
 });
+
+test('E2E CLI - Stdin stream input mapping success', async () => {
+  const dictPath = path.join(fixturesDir, 'dict_flat.json');
+  const outputPath = path.join(outputDir, 'transformed_stream.json');
+  const rawInput = await fs.readFile(path.join(fixturesDir, 'random_flat.json'), 'utf8');
+  const arrayWrapped = JSON.stringify([JSON.parse(rawInput)]);
+
+  const { code, stdout, stderr } = await runCLI(['-s', '-d', dictPath, '-o', outputPath], arrayWrapped);
+
+  assert.strictEqual(code, 0, `CLI stream execution failed. Stderr: ${stderr}`);
+
+  const rawOutput = await fs.readFile(outputPath, 'utf8');
+  const outputData = JSON.parse(rawOutput);
+  
+  assert.ok(Array.isArray(outputData));
+  assert.strictEqual(outputData.length, 1);
+  assert.strictEqual(outputData[0].profile.fullName, 'Elowen Vance');
+
+  assert.match(stdout, /"inputFile":"<stream>"/, 'Telemetry must list input as <stream>');
+  assert.match(stdout, /"processedFileCount":1/, 'Telemetry must list processedFileCount as 1');
+});
+
+test('E2E CLI - Reject both input and stream options', async () => {
+  const dictPath = path.join(fixturesDir, 'dict_flat.json');
+  const outputPath = path.join(outputDir, 'transformed_should_fail.json');
+  const inputPath = path.join(fixturesDir, 'random_flat.json');
+
+  const { code, stderr } = await runCLI(['-i', inputPath, '-s', '-d', dictPath, '-o', outputPath]);
+
+  assert.strictEqual(code, 1);
+  assert.match(stderr, /Cannot specify both --input and --stream/);
+});
+
+test('E2E CLI - Reject output directory when using stream input', async () => {
+  const dictPath = path.join(fixturesDir, 'dict_flat.json');
+
+  const { code, stderr } = await runCLI(['-s', '-d', dictPath, '-o', outputDir], '[]');
+
+  assert.strictEqual(code, 1);
+  assert.match(stderr, /Output path must point to a file, not a directory/);
+});
+

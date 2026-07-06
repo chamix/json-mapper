@@ -95,3 +95,30 @@ test('CLIController - handles errors gracefully and logs warnings', async () => 
   assert.strictEqual(spyLogger.warns[0].message, 'CLI Controller execution completed with failures');
   assert.strictEqual(spyLogger.warns[0].context.error, 'UseCase Failure');
 });
+
+test('CLIController - maps stream parameter correctly and handles success', async () => {
+  const consoleMock = new MockConsole();
+  const presenter = new CLIPresenter(consoleMock);
+  const useCaseMock = new MockMapJsonUseCase();
+  const spyLogger = new SpyLogger();
+  const controller = new CLIController(useCaseMock, presenter, spyLogger);
+
+  const mockStream = {};
+  const exitCode = await controller.handle({
+    mode: '1:1',
+    dictionaryFile: 'dict_src.json',
+    outputFile: 'output_src.json',
+    inputStream: mockStream
+  });
+
+  assert.strictEqual(exitCode, 0);
+  assert.deepEqual(useCaseMock.calledWith, {
+    mode: '1:1',
+    dictionaryFile: 'dict_src.json',
+    outputFile: 'output_src.json',
+    inputStream: mockStream
+  });
+
+  assert.ok(consoleMock.logs[0].includes('✔ Mapping Process Completed Successfully!'));
+});
+

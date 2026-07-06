@@ -1,8 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
+import { Readable } from 'node:stream';
 import { MapJsonUseCase } from '../../src/usecases/MapJsonUseCase.js';
 import { IFileRepository } from '../../src/usecases/ports/IFileRepository.js';
 import { ILogger } from '../../src/usecases/ports/ILogger.js';
+import { IStreamReader } from '../../src/usecases/ports/IStreamReader.js';
+import { RequestDTO } from '../../src/usecases/dto/RequestDTO.js';
 
 class MockFileRepository extends IFileRepository {
   constructor(files = {}) {
@@ -20,6 +23,17 @@ class MockFileRepository extends IFileRepository {
 
   async writeJson(filePath, data) {
     this.written[filePath] = data;
+  }
+}
+
+class MockStreamReader extends IStreamReader {
+  constructor(data) {
+    super();
+    this.data = data;
+  }
+
+  async readJson(stream) {
+    return this.data;
   }
 }
 
@@ -137,3 +151,40 @@ test('MapJsonUseCase - logs catastrophic failure when write fails', async () => 
   assert.strictEqual(spyLogger.errors[0].message, 'JSON mapping execution flow failed catastrophically');
   assert.strictEqual(spyLogger.errors[0].error.message, 'Disk write failure');
 });
+
+test('MapJsonUseCase - successful execution in stream input mode', async () => {
+  const files = {
+    'dictionary.json': {
+      mappedVal: 'rawVal'
+    }
+  };
+  const mockRepo = new MockFileRepository(files);
+  const spyLogger = new SpyLogger();
+  const mockStreamReader = new MockStreamReader([{ rawVal: 'hello' }, { rawVal: 'world' }]);
+  
+  const usecase = new MapJsonUseCase(mockRepo, spyLogger, undefined, mockStreamReader);
+  
+  const request = new RequestDTO({
+    mode: '1:1',
+    dictionaryFile: 'dictionary.json',
+    files: [],
+    outputFile: 'output_piped.json',
+    inputStream: Readable.from('dummy')
+  });
+
+  const result = await usecase.execute(request);
+
+  assert.strictEqual(result.recordCount, 2);
+  assert.strictEqual(result.inputFile, '<stream>');
+  assert.strictEqual(result.outputFile, 'output_piped.json');
+  assert.deepEqual(mockRepo.written['output_piped.json'], [
+    { mappedVal: 'hello' },
+    { mappedVal: 'world' }
+  ]);
+
+  assert.strictEqual(spyLogger.telemetries.length, 1);
+  const metricLog = spyLogger.telemetries[0];
+  assert.strictEqual(metricLog.data.inputFile, '<stream>');
+  assert.strictEqual(metricLog.data.outputFile, 'output_piped.json');
+});
+
