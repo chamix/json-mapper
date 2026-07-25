@@ -1,6 +1,10 @@
 import { performance } from 'node:perf_hooks';
 import { JSONMapper } from '../domain/services/JSONMapper.js';
 
+/**
+ * Orchestrates reading source JSON (from file or stream), applying a dictionary-driven
+ * mapping transformation, and writing the mapped result, in 1:1 or many:1 modes.
+ */
 export class MapJsonUseCase {
   constructor(fileRepository, logger, jsonMapper = new JSONMapper(), streamReader = null) {
     this.fileRepository = fileRepository;
