@@ -1,5 +1,5 @@
 node_modules/
 .env
-.agents/specs/
 test/output/*
 !test/output/.gitkeep
+.claude/settings.local.json
