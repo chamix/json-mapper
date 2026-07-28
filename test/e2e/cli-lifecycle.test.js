@@ -244,3 +244,27 @@ test('E2E CLI - Reject output directory when using stream input', async () => {
   assert.match(stderr, /Output path must point to a file, not a directory/);
 });
 
+test('E2E CLI - Reject missing input when neither input nor stream specified', async () => {
+  const dictPath = path.join(fixturesDir, 'dict_flat.json');
+  const outputPath = path.join(outputDir, 'transformed_should_fail.json');
+
+  const { code, stdout, stderr } = await runCLI(['-d', dictPath, '-o', outputPath]);
+
+  assert.strictEqual(code, 1);
+  assert.match(stderr, /Either --input or --stream option must be specified/);
+  assert.strictEqual(stdout, '', 'Stdout must remain empty; error must be reported on stderr');
+});
+
+test('E2E CLI - Reject nonexistent input path with clean Path Resolution Error', async () => {
+  const dictPath = path.join(fixturesDir, 'dict_flat.json');
+  const outputPath = path.join(outputDir, 'transformed_should_fail.json');
+  const missingInputPath = path.join(fixturesDir, 'does_not_exist_12345.json');
+
+  const { code, stdout, stderr } = await runCLI(['-i', missingInputPath, '-d', dictPath, '-o', outputPath]);
+
+  assert.strictEqual(code, 1);
+  assert.match(stderr, /Path Resolution Error/);
+  assert.match(stderr, /Input path not found/);
+  assert.doesNotMatch(stderr, /\n\s*at /, 'Stderr must not leak a raw Node stack trace to the user');
+});
+
