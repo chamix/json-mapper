@@ -189,3 +189,10 @@ Execute a single target test file directly:
 ```bash
 node --test test/e2e/cli-lifecycle.test.js
 ```
+---
+
+## Further Reading
+
+The design decisions behind this project — the shift from prompt-and-paste GenAI usage to a coordinated multi-agent engineering cell (Architect / Full-Stack / Technical Writer) under Clean Architecture and TDD — are written up in more detail here:
+
+👉 [Raise the Level of Abstraction: Del Assembler a la Inteligencia Artificial Generativa](https://technical-blog-6xs.pages.dev/my-articles/articulo_raise_the_level_of_abstraction/)
